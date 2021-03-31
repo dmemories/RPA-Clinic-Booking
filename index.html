@@ -37,8 +37,16 @@
             <td><input type="text" id="useCase"></td>
         </tr>
         <tr>
-            <td>Business Unit<br/><x class="description"/>(CFO,CBO,EBO,Operations,..)<x/></td>
-            <td><input type="text" id="business"></td>
+            <td>Business Unit/Company<br/><x class="description"/><x/></td>
+            <!-- <input type="text" id="business"> -->
+            <td>
+            <label class="select">
+              <select id="business" class="bookTime" onchange="businessOther(this.value)"></select>
+              <svg>
+                <use xlink:href="#select-arrow-down"></use>
+              </svg>
+            </label>
+            </td>
         </tr>
         <tr>
             <td>Email</td>

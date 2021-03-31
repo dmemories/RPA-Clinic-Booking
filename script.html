@@ -1,289 +1,341 @@
 <script>
 
-    // -----------------------------------------------------------------------------------------------------
-    // Config
-    // -----------------------------------------------------------------------------------------------------
-    
-      const FUTURE_DAY = 90; // Future day from current date that add to list.
-      const ALLOW_DAY = [1, 3]; // 0=Sun, 1=Mon, 2=Tue, ...
-      const BOOK_TIMES = [
-        "09.00 - 10.30 [Coach 1]",
-        "09.00 - 10.30 [Coach 2]",
-        "10.30 - 12.00 [Coach 1]",
-        "10.30 - 12.00 [Coach 2]",
-        "13.30 - 15.00 [Coach 3]",
-        "13.30 - 15.00 [Coach 4]",
-        "13.30 - 15.00 [Coach 5]",
-        "15.00 - 17.00 [Coach 3]",
-        "15.00 - 17.00 [Coach 4]",
-        "15.00 - 17.00 [Coach 5]"
-      ]
-    
-    // -----------------------------------------------------------------------------------------------------
-    // Global
-    // -----------------------------------------------------------------------------------------------------
-    
-      var enableDateArr = [/*"3-17-2021",*/];
-      var fullDateArr = [];
-      var lastSelectDate = "";
-    
-    
-    // -----------------------------------------------------------------------------------------------------
-    // Main
-    // -----------------------------------------------------------------------------------------------------
-    
-      const setDatePickerCallBack = (fullDateArr_) => {
-        fullDateArr = fullDateArr_;
-        let futureDateArr = getFutureDate(); // From today to FUTURE_DAY
-        enableDateArr = futureDateArr;
-    
-        $('#bookDate').val("").removeClass("loading").prop("disabled", false).datepicker({
-          //minDate: new Date(2010, 0, 1),
-          //maxDate: new Date(2010, 5, 31),
-          //dateFormat: 'DD, MM, d, yy',
-          dateFormat: 'd-m-yy',
-          constrainInput: true,
-          beforeShowDay: (date) => {
-            let m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
-            let dayStr = d + '-' + (m+1) + '-' + y;
-            if (date > new Date() && $.inArray(dayStr, enableDateArr) != -1) {
-              return [true, (($.inArray(dayStr, fullDateArr) != -1) ? "fullDateHighlight" : "validDateHighlight")];
-            }
-            return [false];
+  // -----------------------------------------------------------------------------------------------------
+  // Config
+  // -----------------------------------------------------------------------------------------------------
+  
+    const FUTURE_DAY = 90; // Future day from current date that add to list.
+    const ALLOW_DAY = [1, 3]; // 0=Sun, 1=Mon, 2=Tue, ...
+    const BOOK_TIMES = [
+      "09.00 - 10.30 [Coach 1]",
+      "09.00 - 10.30 [Coach 2]",
+      "10.30 - 12.00 [Coach 1]",
+      "10.30 - 12.00 [Coach 2]",
+      "13.30 - 15.00 [Coach 3]",
+      "13.30 - 15.00 [Coach 4]",
+      "13.30 - 15.00 [Coach 5]",
+      "15.00 - 17.00 [Coach 3]",
+      "15.00 - 17.00 [Coach 4]",
+      "15.00 - 17.00 [Coach 5]"
+    ]
+  
+  // -----------------------------------------------------------------------------------------------------
+  // Global
+  // -----------------------------------------------------------------------------------------------------
+  
+    var enableDateArr = [/*"3-17-2021",*/];
+    var fullDateArr = [];
+    var lastSelectDate = "";
+  
+  
+  // -----------------------------------------------------------------------------------------------------
+  // Main
+  // -----------------------------------------------------------------------------------------------------
+  
+    const setDatePickerCallBack = (fullDateArr_) => {
+      fullDateArr = fullDateArr_;
+      let futureDateArr = getFutureDate(); // From today to FUTURE_DAY
+      enableDateArr = futureDateArr;
+  
+      $('#bookDate').val("").removeClass("loading").prop("disabled", false).datepicker({
+        //minDate: new Date(2010, 0, 1),
+        //maxDate: new Date(2010, 5, 31),
+        //dateFormat: 'DD, MM, d, yy',
+        dateFormat: 'd-m-yy',
+        constrainInput: true,
+        beforeShowDay: (date) => {
+          let m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
+          let dayStr = d + '-' + (m+1) + '-' + y;
+          if (date > new Date() && $.inArray(dayStr, enableDateArr) != -1) {
+            return [true, (($.inArray(dayStr, fullDateArr) != -1) ? "fullDateHighlight" : "validDateHighlight")];
           }
-          
-        });
-        if (lastSelectDate != "") { $("#bookDate").val(lastSelectDate); }
-      }
-      function setDatePicker() {
-        lastSelectDate = $("#bookDate").val();
-        $('#bookDate').addClass("loading").val("Loading...").prop("disabled", true).datepicker("destroy");
-        google.script.run.withSuccessHandler(setDatePickerCallBack).xcelFullDate(BOOK_TIMES);
-      }
-    
-    
-    
-      const setTimeCallback = (timeDataArr) => {
-        for (let i = 0; i < timeDataArr.length; i++) {
-          console.log(timeDataArr[i])
-        }
-    
-        $("#timeContent").html("");
-        let parent = document.getElementById('timeContent');
-        let itemList = document.createElement("select");
-        itemList.classList.add("bookTime");
-        itemList.id = "bookTime";
-        if (timeDataArr.length > 0) {
-          $("#btn_confirm").prop('disabled', false);
-          itemList.style.color = "#28b463";
-          for (let i = 0; i < timeDataArr.length; i++) {
-            let option = document.createElement("option");
-            option.text = timeDataArr[i];
-            itemList.add(option);
-          }
-        }
-        else {
-          $("#btn_confirm").prop('disabled', true);
-          itemList.style.color = "#ff0000";
-          let option = document.createElement("option");
-          option.text = "FULL";
-          itemList.add(option);
+          return [false];
         }
         
-        parent.appendChild(itemList);
-        // Other
-        $("#bookDate").prop('disabled', false);
-      };
-      function setTime() {
-        let pickedDate = $("#bookDate").val();
-        $("#timeContent").html("<x class='loading'>Loading ...</x>");
-        google.script.run.withSuccessHandler(setTimeCallback).xcelGetValidTime({
-          'pickedDate': pickedDate,
-          'bookTimeArr': BOOK_TIMES
-        });
+      });
+      if (lastSelectDate != "") { $("#bookDate").val(lastSelectDate); }
+    }
+    function setDatePicker() {
+      lastSelectDate = $("#bookDate").val();
+      $('#bookDate').addClass("loading").val("Loading...").prop("disabled", true).datepicker("destroy");
+      google.script.run.withSuccessHandler(setDatePickerCallBack).xcelFullDate(BOOK_TIMES);
+    }
+  
+  
+  
+    const setTimeCallback = (timeDataArr) => {
+      for (let i = 0; i < timeDataArr.length; i++) {
+        console.log(timeDataArr[i])
       }
-    
-    
-      const setBookTableCallback = (bookedDataArr) => {
-        $("#bookedContent").html("");
-        let parent = document.getElementById('bookedContent');
-        let resultContent = "";
-        if (bookedDataArr.length < 1) {
-          let trObj = document.createElement('tr');
-          let tdObj = document.createElement('td');
-          tdObj.colSpan = "6";
-          tdObj.appendChild(document.createTextNode("Empty"));
-          trObj.appendChild(tdObj);
-          parent.appendChild(trObj);
-        }
-        else {
-          for (let i = 0; i < bookedDataArr.length; i++) {
-            let trObj = document.createElement('tr');
-            trObj.style.textAlign = "center";
-            trObj.style.verticalAlign = "middle";
-    
-            for (let j = 0; j < bookedDataArr[i].length; j++) {
-              let tdObj = document.createElement('td');
-              if (bookedDataArr[i][j].indexOf("{{img}}") >= 0) {
-                  var img = document.createElement('img');
-                  img.src = bookedDataArr[i][j].replace("{{img}}", "");
-                  img.width = "30"; 
-                  img.style.cursor = "pointer";
-                  img.addEventListener("click", ()=>{cancelBookingClick(bookedDataArr[i][0], bookedDataArr[i][1]);} );  // 0 = Date, 1 = Time
-                  tdObj.appendChild(img);
-              }
-              else { tdObj.appendChild(document.createTextNode(bookedDataArr[i][j])); }
-              trObj.appendChild(tdObj);
-              tdObj = null;
-            }
-            parent.appendChild(trObj);
-            trObj = null;
-          }
+  
+      $("#timeContent").html("");
+      let parent = document.getElementById('timeContent');
+      let itemList = document.createElement("select");
+      itemList.classList.add("bookTime");
+      itemList.id = "bookTime";
+      if (timeDataArr.length > 0) {
+        $("#btn_confirm").prop('disabled', false);
+        itemList.style.color = "#28b463";
+        for (let i = 0; i < timeDataArr.length; i++) {
+          let option = document.createElement("option");
+          option.text = timeDataArr[i];
+          itemList.add(option);
         }
       }
-      function setBookTable() {
-        let pickedDate = $("#bookDate").val();
-        $("#bookedContent").html("");
-        let parent = document.getElementById('bookedContent');
+      else {
+        $("#btn_confirm").prop('disabled', true);
+        itemList.style.color = "#ff0000";
+        let option = document.createElement("option");
+        option.text = "FULL";
+        itemList.add(option);
+      }
+      
+      parent.appendChild(itemList);
+      // Other
+      $("#bookDate").prop('disabled', false);
+    };
+    function setTime() {
+      let pickedDate = $("#bookDate").val();
+      $("#timeContent").html("<x class='loading'>Loading ...</x>");
+      google.script.run.withSuccessHandler(setTimeCallback).xcelGetValidTime({
+        'pickedDate': pickedDate,
+        'bookTimeArr': BOOK_TIMES
+      });
+    }
+  
+  
+    const setBookTableCallback = (bookedDataArr) => {
+      $("#bookedContent").html("");
+      let parent = document.getElementById('bookedContent');
+      let resultContent = "";
+      if (bookedDataArr.length < 1) {
         let trObj = document.createElement('tr');
         let tdObj = document.createElement('td');
         tdObj.colSpan = "6";
-        tdObj.classList.add("loading");
-        tdObj.appendChild(document.createTextNode("Loading..."));
+        tdObj.appendChild(document.createTextNode("Empty"));
         trObj.appendChild(tdObj);
         parent.appendChild(trObj);
-        google.script.run.withSuccessHandler(setBookTableCallback).xcelGetBookedData(pickedDate);
       }
-    
-      const confirmCallback = (isSucc) => {
-        if (isSucc) {
-          $("#useCase").val("");
-          $("#cancelpass").val("");
-          Swal.fire('Booking Successfully!', '', 'success')
-        }
-        else { Swal.fire('Booking Failed!', 'Your booking date has been booked!', 'error') }
-    
-        setTime();
-        setBookTable();
-        setDatePicker();
-      }
-      function confirmClick() {
-        Swal.fire({
-          title: 'Confirm your booking?',
-          showCancelButton: true,
-          confirmButtonText: `OK`,
-          denyButtonText: `Cancel`,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let bookDate = $("#bookDate").val();
-            let bookTime = $("#bookTime").val();
-            let bookUseCase = $("#useCase").val();
-            let bookBusiness = $("#business").val();
-            let bookEmail = $("#email").val();
-            let bookCancelPass = $("#cancelpass").val();
-            
-            if (bookUseCase.length < 1) confirmClickInvalid('Invalid Use Case !', 'warning', 'useCase');
-            else if (bookBusiness.length < 1) confirmClickInvalid('Invalid Business Unit !', 'warning', 'business');
-            else if (bookEmail.length < 1 || validateEmail(bookEmail) == false) confirmClickInvalid('Invalid Email !', 'warning', 'email');
-            else if (bookCancelPass.length < 4) confirmClickInvalid('Password must be 4-10 characters !', 'warning', 'cancelpass');
-            else {
-              $("#bookDate").prop('disabled', true);
-              $("#timeContent").prop('disabled', true);
-              $("#btn_confirm").prop('disabled', true);
-              $("#bookedContent").html("");
-    
-              google.script.run.withSuccessHandler(confirmCallback).xcelAddRowData({
-                  'bookDate': bookDate,
-                  'bookTime': bookTime,
-                  'bookCase': bookUseCase,
-                  'bookTeam': bookBusiness,
-                  'bookEmail': bookEmail,
-                  'bookCancelPass': bookCancelPass
-              });
+      else {
+        for (let i = 0; i < bookedDataArr.length; i++) {
+          let trObj = document.createElement('tr');
+          trObj.style.textAlign = "center";
+          trObj.style.verticalAlign = "middle";
+  
+          for (let j = 0; j < bookedDataArr[i].length; j++) {
+            let tdObj = document.createElement('td');
+            if (bookedDataArr[i][j].indexOf("{{img}}") >= 0) {
+                var img = document.createElement('img');
+                img.src = bookedDataArr[i][j].replace("{{img}}", "");
+                img.width = "30"; 
+                img.style.cursor = "pointer";
+                img.addEventListener("click", ()=>{cancelBookingClick(bookedDataArr[i][0], bookedDataArr[i][1]);} );  // 0 = Date, 1 = Time
+                tdObj.appendChild(img);
             }
+            else { tdObj.appendChild(document.createTextNode(bookedDataArr[i][j])); }
+            trObj.appendChild(tdObj);
+            tdObj = null;
           }
-        });
-      }
-    
-      const cancelBookCallback = (isSucc) => {
-        if (isSucc) {
-          /* Swal.fire({
-            //title: `${result.value.pass}'s avatar`,
-            title: "ยกเลิกเรียบร้อยแล้ว เยี่ยมมากๆ เลยครับ",
-            imageWidth: 100,
-            imageHeight: 150,
-            imageUrl: "https://drive.google.com/thumbnail?id=17vNUYs0vPb-OmgLDMge6vqZ6SlzylThf"
-          }) */
-          Swal.fire('Cancel Successfully!', '', 'success')
+          parent.appendChild(trObj);
+          trObj = null;
         }
-        else { Swal.fire('Wrong Password!', '', 'error') }
-        setTime();
-        setBookTable();
-        setDatePicker();
       }
-      function cancelBookingClick(whichDate, whichTime) {
-        Swal.fire({
-          title: 'Type your password',
-          input: 'password',
-          inputAttributes: { autocapitalize: 'off', maxlength: 10 },
-          showCancelButton: true,
-          confirmButtonText: 'OK',
-          showLoaderOnConfirm: true,
-          preConfirm: (pass) => { return {'pass' : pass} },
-          allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-          if (result.isConfirmed) {
+    }
+    function setBookTable() {
+      let pickedDate = $("#bookDate").val();
+      $("#bookedContent").html("");
+      let parent = document.getElementById('bookedContent');
+      let trObj = document.createElement('tr');
+      let tdObj = document.createElement('td');
+      tdObj.colSpan = "6";
+      tdObj.classList.add("loading");
+      tdObj.appendChild(document.createTextNode("Loading..."));
+      trObj.appendChild(tdObj);
+      parent.appendChild(trObj);
+      google.script.run.withSuccessHandler(setBookTableCallback).xcelGetBookedData(pickedDate);
+    }
+  
+    const confirmCallback = (isSucc) => {
+      if (isSucc) {
+        $("#useCase").val("");
+        $("#cancelpass").val("");
+        Swal.fire('Booking Successfully!', '', 'success')
+      }
+      else { Swal.fire('Booking Failed!', 'Your booking date has been booked!', 'error') }
+  
+      setTime();
+      setBookTable();
+      setDatePicker();
+    }
+    function confirmClick() {
+      Swal.fire({
+        title: 'Confirm your booking?',
+        showCancelButton: true,
+        confirmButtonText: `OK`,
+        denyButtonText: `Cancel`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let bookDate = $("#bookDate").val();
+          let bookTime = $("#bookTime").val();
+          let bookUseCase = $("#useCase").val();
+          let bookBusiness = $("#business").val();
+          let bookEmail = $("#email").val();
+          let bookCancelPass = $("#cancelpass").val();
+          
+          if (bookUseCase.length < 1) confirmClickInvalid('Invalid Use Case !', 'warning', 'useCase');
+          else if (bookBusiness.length < 1) confirmClickInvalid('Invalid Business Unit !', 'warning', 'business');
+          else if (bookEmail.length < 1 || validateEmail(bookEmail) == false) confirmClickInvalid('Invalid Email !', 'warning', 'email');
+          else if (bookCancelPass.length < 4) confirmClickInvalid('Password must be 4-10 characters !', 'warning', 'cancelpass');
+          else {
             $("#bookDate").prop('disabled', true);
             $("#timeContent").prop('disabled', true);
             $("#btn_confirm").prop('disabled', true);
             $("#bookedContent").html("");
-    
-            google.script.run.withSuccessHandler(cancelBookCallback).xcelCancelBooking({
-                'bookDate': whichDate,
-                'bookTime': whichTime,
-                'bookPass': result.value.pass
+  
+            google.script.run.withSuccessHandler(confirmCallback).xcelAddRowData({
+                'bookDate': bookDate,
+                'bookTime': bookTime,
+                'bookCase': bookUseCase,
+                'bookTeam': bookBusiness,
+                'bookEmail': bookEmail,
+                'bookCancelPass': bookCancelPass
             });
           }
-        })
-    
-      }
-    
-      function dateSelected() {
-        $("#bookDate").prop('disabled', true);
-        setTime();
-        setBookTable();
-      }
-    
-    // -----------------------------------------------------------------------------------------------------
-    // Support Functions
-    // -----------------------------------------------------------------------------------------------------
-      function validateEmail(email) {
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-      }
-    
-      function getFutureDate() {
-        let startDate = new Date();
-        let endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + FUTURE_DAY)
-    
-        let futureDateArr = [];
-        for (let loopDate = new Date(startDate); loopDate <= endDate; loopDate.setDate(loopDate.getDate() + 1)) {
-          if (ALLOW_DAY.includes(loopDate.getDay())) {
-            let day = loopDate.getDate();
-            let month = loopDate.getMonth() + 1;
-            dateStr = (day > 9 ? "" : "0") + day + "-" + (month > 12 ? "1" : month) + "-" + loopDate.getFullYear();
-            futureDateArr.push(dateStr);
-          }
         }
-        return futureDateArr;
+      });
+    }
+  
+    const cancelBookCallback = (isSucc) => {
+      if (isSucc) {
+        /* Swal.fire({
+          //title: `${result.value.pass}'s avatar`,
+          title: "ยกเลิกเรียบร้อยแล้ว เยี่ยมมากๆ เลยครับ",
+          imageWidth: 100,
+          imageHeight: 150,
+          imageUrl: "https://drive.google.com/thumbnail?id=17vNUYs0vPb-OmgLDMge6vqZ6SlzylThf"
+        }) */
+        Swal.fire('Cancel Successfully!', '', 'success')
       }
-    
-      function confirmClickInvalid(txt, type, eleId) {
-        Swal.fire(txt, '', type)
-        setTimeout(()=>{ $("#" + eleId).focus() },500)
-      }
-    
+      else { Swal.fire('Wrong Password!', '', 'error') }
+      setTime();
+      setBookTable();
       setDatePicker();
-    
-</script>
+    }
+    function cancelBookingClick(whichDate, whichTime) {
+      Swal.fire({
+        title: 'Type your password',
+        input: 'password',
+        inputAttributes: { autocapitalize: 'off', maxlength: 10 },
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        showLoaderOnConfirm: true,
+        preConfirm: (pass) => { return {'pass' : pass} },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $("#bookDate").prop('disabled', true);
+          $("#timeContent").prop('disabled', true);
+          $("#btn_confirm").prop('disabled', true);
+          $("#bookedContent").html("");
+  
+          google.script.run.withSuccessHandler(cancelBookCallback).xcelCancelBooking({
+              'bookDate': whichDate,
+              'bookTime': whichTime,
+              'bookPass': result.value.pass
+          });
+        }
+      })
+  
+    }
+  
+    function dateSelected() {
+      $("#bookDate").prop('disabled', true);
+      setTime();
+      setBookTable();
+    }
+  
+  // -----------------------------------------------------------------------------------------------------
+  // Support Functions
+  // -----------------------------------------------------------------------------------------------------
+    function validateEmail(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+    }
+  
+    function getFutureDate() {
+      let startDate = new Date();
+      let endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + FUTURE_DAY)
+  
+      let futureDateArr = [];
+      for (let loopDate = new Date(startDate); loopDate <= endDate; loopDate.setDate(loopDate.getDate() + 1)) {
+        if (ALLOW_DAY.includes(loopDate.getDay())) {
+          let day = loopDate.getDate();
+          let month = loopDate.getMonth() + 1;
+          dateStr = (day > 9 ? "" : "0") + day + "-" + (month > 12 ? "1" : month) + "-" + loopDate.getFullYear();
+          futureDateArr.push(dateStr);
+        }
+      }
+      return futureDateArr;
+    }
+  
+    function confirmClickInvalid(txt, type, eleId) {
+      Swal.fire(txt, '', type)
+      setTimeout(()=>{ $("#" + eleId).focus() },500)
+    }
+  
+    function setBusiness() {
+      let busArr = [
+        "ADD",
+        "Audit",
+        "CBO",
+        "CFO",
+        "CSM & ACC",
+        "Enterprise",
+        "FBB",
+        "HR",
+        "mPay",
+        "NB",
+        "Operation",
+        "Region",
+        "Solution",
+        "Other"
+      ];
+      var selectList = document.getElementById("business");
+      for (var i = 0; i < busArr.length; i++) {
+          var option = document.createElement("option");
+          option.value = busArr[i];
+          option.text = busArr[i];
+          selectList.appendChild(option);
+      }
+    }
+  
+    function businessOther(val) {
+      if (val == "Other") {
+  
+        Swal.fire({
+          title: 'Type your Business',
+          input: 'text',
+          inputAttributes: { autocapitalize: 'off', maxlength: 10 },
+          showCancelButton: true,
+          confirmButtonText: 'OK',
+          showLoaderOnConfirm: true,
+          preConfirm: (input) => { return {'input' : input} },
+          allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+          if (result.isConfirmed) {
+            var selectList = document.getElementById("business");
+            var option = document.createElement("option");
+            option.value = result.value.input;
+            option.text = result.value.input;
+            selectList.appendChild(option);
+            selectList.value = result.value.input;
+          }
+        })
+  
+      }
+    }
+  
+  </script>
+  
+  
