@@ -304,6 +304,7 @@
       var selectList = document.getElementById("business");
       for (var i = 0; i < busArr.length; i++) {
           var option = document.createElement("option");
+          if (i == (busArr.length - 1)) option.style.color = "blue";
           option.value = busArr[i];
           option.text = busArr[i];
           selectList.appendChild(option);
@@ -314,7 +315,7 @@
       if (val == "Other") {
   
         Swal.fire({
-          title: 'Type your Business',
+          title: 'Type your Business Name',
           input: 'text',
           inputAttributes: { autocapitalize: 'off', maxlength: 10 },
           showCancelButton: true,

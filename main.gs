@@ -86,7 +86,6 @@ function xcelGetValidTime(dataArr) {
 
   for(let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
-    Logger.log("D")
     if (validCell(dateVal)) {
       let statusVal = dataRow[i][STATUS_COLNUM];
       if (dateVal == pickedDate && statusVal == STATUS_ACTIVE) {
