@@ -17,7 +17,19 @@
       "15.00 - 17.00 [Coach 3]",
       "15.00 - 17.00 [Coach 4]",
       "15.00 - 17.00 [Coach 5]"
-    ]
+    ];
+  
+    const STAFF_MAXSTACK = 2;
+    const STAFF_ARR = [
+      //{id:0, email:"", nickname:"N/A"},
+      {id:0, email:"1111111@yahoo.com", nickname:"1111"},
+      {id:1, email:"2222222@yahoo.com", nickname:"2222"},
+      {id:2, email:"3333333@yahoo.com", nickname:"3333"},
+      {id:3, email:"4444444@yahoo.com", nickname:"4444"},
+      {id:4, email:"5555555@yahoo.com", nickname:"5555"},
+      {id:5, email:"6666666@yahoo.com", nickname:"6666"}
+    ];
+  
   
   // -----------------------------------------------------------------------------------------------------
   // Global
@@ -147,7 +159,7 @@
       let parent = document.getElementById('bookedContent');
       let trObj = document.createElement('tr');
       let tdObj = document.createElement('td');
-      tdObj.colSpan = "6";
+      tdObj.colSpan = "7";
       tdObj.classList.add("loading");
       tdObj.appendChild(document.createTextNode("Loading..."));
       trObj.appendChild(tdObj);
@@ -155,17 +167,20 @@
       google.script.run.withSuccessHandler(setBookTableCallback).xcelGetBookedData(pickedDate);
     }
   
-    const confirmCallback = (isSucc) => {
-      if (isSucc) {
+    const confirmCallback = (errReason) => {
+      if (errReason.length > 0) { 
+        Swal.fire('Booking Failed!', errReason, 'error')
+      }
+      else { 
         $("#useCase").val("");
         $("#cancelpass").val("");
-        Swal.fire('Booking Successfully!', '', 'success')
+        Swal.fire('Booking Successfully!', '', 'success') 
       }
-      else { Swal.fire('Booking Failed!', 'Your booking date has been booked!', 'error') }
   
       setTime();
       setBookTable();
       setDatePicker();
+      setValidStaff();
     }
     function confirmClick() {
       Swal.fire({
@@ -178,6 +193,7 @@
           let bookDate = $("#bookDate").val();
           let bookTime = $("#bookTime").val();
           let bookUseCase = $("#useCase").val();
+          let bookStaffId = $("#staff").val();
           let bookBusiness = $("#business").val();
           let bookEmail = $("#email").val();
           let bookCancelPass = $("#cancelpass").val();
@@ -192,13 +208,16 @@
             $("#btn_confirm").prop('disabled', true);
             $("#bookedContent").html("");
   
-            google.script.run.withSuccessHandler(confirmCallback).xcelAddRowData({
+            google.script.run.withSuccessHandler(confirmCallback).xcelBookingData({
                 'bookDate': bookDate,
                 'bookTime': bookTime,
                 'bookCase': bookUseCase,
+                'bookStaffEmail': (bookStaffId >= 0 ? STAFF_ARR[bookStaffId].email : ''),
                 'bookTeam': bookBusiness,
                 'bookEmail': bookEmail,
-                'bookCancelPass': bookCancelPass
+                'bookCancelPass': bookCancelPass,
+                'staffArr': STAFF_ARR,
+                'staffMaxStack': STAFF_MAXSTACK
             });
           }
         }
@@ -245,13 +264,43 @@
           });
         }
       })
-  
     }
   
+  
+    
+    
+  
+    const setValidStaffCallback = (validStaffIdArr) => {
+      var staffList = document.getElementById("staff");
+  
+      // Clear old option
+      for (i = 0; i < staffList.options.length; i++) {
+        staffList.options[i] = null;
+      }
+      var option = document.createElement("option");
+      option.value = -1;
+      option.text = "N/A";
+      staffList.appendChild(option);
+      for (var i = 0; i < validStaffIdArr.length; i++) {
+          var option = document.createElement("option");
+          option.value = validStaffIdArr[i]['id'];
+          option.text = validStaffIdArr[i]['email'] + " (" + validStaffIdArr[i]['nickname'] + ")";
+          staffList.appendChild(option);
+      }
+    }
+    function setValidStaff() {
+      let bookDate = $("#bookDate").val();
+      google.script.run.withSuccessHandler(setValidStaffCallback).xcelGetValidStaff({
+          'bookDate': bookDate,
+          'staffArr': STAFF_ARR,
+          'staffMaxStack': STAFF_MAXSTACK
+      });
+    }
     function dateSelected() {
       $("#bookDate").prop('disabled', true);
       setTime();
       setBookTable();
+      setValidStaff();
     }
   
   // -----------------------------------------------------------------------------------------------------

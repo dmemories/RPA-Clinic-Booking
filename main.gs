@@ -2,10 +2,11 @@
 const DATE_COLNUM = 0;
 const TIME_COLNUM = 1;
 const USECASE_COLNUM = 2;
-const BUSINESS_COLNUM = 3;
-const EMAIL_COLNUM = 4;
-const CANCPASS_COLNUM = 5;
-const STATUS_COLNUM = 6;
+const STAFF_EMAIL_COLNUM = 3;
+const BUSINESS_COLNUM = 4;
+const EMAIL_COLNUM = 5;
+const CANCPASS_COLNUM = 6;
+const STATUS_COLNUM = 7;
 
 const STATUS_ACTIVE = 1;
 const STATUS_CANCLE = 0;
@@ -51,7 +52,7 @@ function xcelGetCol(whichColNum) {
   let dataRow = sheet.getDataRange().getValues();
   let resultArr = [];
   
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let cellVal = dataRow[i][whichColNum];
     if (validCell(cellVal)) {
       resultArr.push(cellVal);
@@ -65,7 +66,7 @@ function xcelHasData(whichColNum, searchData) {
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
 
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let cellVal = dataRow[i][whichColNum];
     if (validCell(cellVal)) {
       if (cellVal == searchData) return true;
@@ -84,7 +85,7 @@ function xcelGetValidTime(dataArr) {
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
 
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
       let statusVal = dataRow[i][STATUS_COLNUM];
@@ -104,12 +105,25 @@ function xcelGetValidTime(dataArr) {
   return bookTimeArr;
 }
 
+function xxx() {
+  let validStaff = xcelGetValidStaff({
+    'bookDate': bookDate,
+    'staffArr': staffArr,
+    'staffMaxStack': staffMaxStack
+  });
+  let foundStaff = false
+  for (i = 0; i < validStaff.length; i++) {
+    if (validStaff[i].email == bookStaffEmail) { foundStaff = true; break; }
+  }
+  if (foundStaff == false) return "Staff is invalid !";
+}
+
 function xcelGetBookedData(pickedDate) {
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
   let bookedData = [];
 
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
       let statusVal = dataRow[i][STATUS_COLNUM];
@@ -119,6 +133,7 @@ function xcelGetBookedData(pickedDate) {
           dateVal,
           dataRow[i][TIME_COLNUM],
           dataRow[i][USECASE_COLNUM],
+          dataRow[i][STAFF_EMAIL_COLNUM],
           dataRow[i][BUSINESS_COLNUM],
           dataRow[i][EMAIL_COLNUM],
           "{{img}}https://sv1.picz.in.th/images/2021/03/26/D6JOUa.png"
@@ -131,38 +146,59 @@ function xcelGetBookedData(pickedDate) {
   return bookedData;
 }
 
-function xcelAddRowData(dataArr) {
+function xcelBookingData(dataArr) {
   // Get Arguments
   let bookDate = dataArr['bookDate'];
   let bookTime = dataArr['bookTime'];
   let bookCase = dataArr['bookCase'];
+  let bookStaffEmail = dataArr['bookStaffEmail'];
   let bookTeam = dataArr['bookTeam'];
   let bookEmail = dataArr['bookEmail'];
   let bookCancelPass = dataArr['bookCancelPass'];
 
+  let staffArr = dataArr['staffArr'];
+  let staffMaxStack = dataArr['staffMaxStack']; 
+
+  
+  let validStaff = xcelGetValidStaff({
+    'bookDate': bookDate,
+    'staffArr': staffArr,
+    'staffMaxStack': staffMaxStack
+  });
+  if (validStaff.length < 1) return "Have no valid staff !";
+
+  // If email is empty (Random)
+  if (bookStaffEmail.length < 1) {
+    bookStaffEmail = validStaff[Math.floor(Math.random() * validStaff.length)].email;
+  }
+  else { // Checking Staff Duplicate
+    let foundStaff = false
+    for (i = 0; i < validStaff.length; i++) {
+      if (validStaff[i].email == bookStaffEmail) { foundStaff = true; break; }
+    }
+    if (foundStaff == false) return "Staff is invalid !";
+  }
+
+
   //let sheet = (SpreadsheetApp.getActiveSpreadsheet()).getSheets()[0];
-  let isSucc = true;
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
       let timeVal = dataRow[i][TIME_COLNUM];
       let statusVal = dataRow[i][STATUS_COLNUM];
       if (dateVal == bookDate && timeVal == bookTime && statusVal == STATUS_ACTIVE) {
-        isSucc = false; // Found duplicate data.
-        break;
+        return "Your booking date has been booked!"; // Found duplicate data.
       }
     }
-    else break;
+    else break; 
   }
-  if (isSucc) {
-    //let bookerGmail = Session.getActiveUser().getEmail();
-    sheet.appendRow([bookDate, bookTime, bookCase, bookTeam, bookEmail, bookCancelPass, STATUS_ACTIVE]); // 0: Active Status, 1: Cancel Status.
-    xcelSetFormat();
-    return true;
-  }
-  else return false;
+  //let bookerGmail = Session.getActiveUser().getEmail();
+  // 0: Active Status, 1: Cancel Status.
+  sheet.appendRow([bookDate, bookTime, bookCase, bookStaffEmail, bookTeam, bookEmail, bookCancelPass, STATUS_ACTIVE]);
+  xcelSetFormat();
+  return "";
 }
 
 function xcelSetFormat(whichColArr = ['A', 'B'], stringFormat = "@") {
@@ -171,7 +207,7 @@ function xcelSetFormat(whichColArr = ['A', 'B'], stringFormat = "@") {
   let cell, currRow, lastRow = dataRow.length;
 
   // Set cell format
-  for(let i = 0; i < lastRow; i++) {
+  for (let i = 0; i < lastRow; i++) {
     currRow = i + 1;
     for (let j = 0; j < whichColArr.length; j++) {
       cell = sheet.getRange(whichColArr[j] + currRow);
@@ -193,7 +229,7 @@ function xcelCancelBooking(dataArr) {
   let isSucc = false;
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
       let timeVal = dataRow[i][TIME_COLNUM];
@@ -221,7 +257,7 @@ function xcelFullDate(bookTimeArr) {
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
 
-  for(let i = 0; i < dataRow.length; i++) {
+  for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
       if (dataRow[i][STATUS_COLNUM] == STATUS_ACTIVE) {
@@ -231,6 +267,76 @@ function xcelFullDate(bookTimeArr) {
         if (tempDateArr[dateVal] >= bookTimeSize) fullDateArr.push(dateVal);
       }
     }
+    else break;
   }
   return  fullDateArr;
 }
+
+function xcelGetValidStaff(dataArr) {
+  // Get Arguments
+  let bookDate = dataArr['bookDate'];
+  let staffArr = dataArr['staffArr'];
+  let staffMaxStack = dataArr['staffMaxStack'];
+  let staffIdDup = [];
+
+  // Init staffIdDup
+  for (let i = 0; i < staffArr.length; i++) { staffIdDup[i] = 0; }
+
+  let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  let dataRow = sheet.getDataRange().getValues();
+  for (let i = 0; i < dataRow.length; i++) {
+    let dateVal = dataRow[i][DATE_COLNUM];
+    if (validCell(dateVal) && staffArr.length > 0) {
+      if (dataRow[i][DATE_COLNUM] == bookDate & dataRow[i][STATUS_COLNUM] == STATUS_ACTIVE) {
+        for (let j = 0; j < staffArr.length; j++) {
+          if (dataRow[i][STAFF_EMAIL_COLNUM] == staffArr[j].email) {
+            staffIdDup[staffArr[j].id]++;
+            if (staffIdDup[staffArr[j].id] >= staffMaxStack) {
+              staffArr.splice(j, 1);
+              break;
+            } 
+          }
+        }
+      }
+    }
+    else break;
+  }
+  return staffArr;
+}
+
+/*  const STAFF_ARR2 = [
+    //{id:0, email:"", nickname:"N/A"},
+    {id:1, email:"1111111@yahoo.com", nickname:"1111"},
+    {id:2, email:"2222222@yahoo.com", nickname:"2222"},
+    {id:3, email:"3333333@yahoo.com", nickname:"3333"},
+    {id:4, email:"4444444@yahoo.com", nickname:"4444"},
+    {id:5, email:"5555555@yahoo.com", nickname:"5555"},
+    {id:6, email:"6666666@yahoo.com", nickname:"6666"}
+  ];
+let x = xcelGetValidStaff({
+  'bookDate': "12-4-2021",
+  'staffArr': STAFF_ARR2,
+  'staffMaxStack': 2
+})
+Logger.log(x) 
+ */
+
+/* 
+staffIdDup[]
+	loopEachRow {
+
+		if (row.date == date && row.enable) {
+			foreach (STAFF_ARR as staff) {
+                if (row.staff == staff) {
+                    staffDup[staff.id]++
+                    if (staffDup[staff.id] >= MaxStck) {
+                        STAFF_ARR.splice(staff.id)
+                        break
+                    }
+                }
+            }
+		} 
+
+	}
+	return STAFF_ARR
+*/
