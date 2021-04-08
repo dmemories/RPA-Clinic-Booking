@@ -6,6 +6,7 @@
   
     const FUTURE_DAY = 90; // Future day from current date that add to list.
     const ALLOW_DAY = [1, 3]; // 0=Sun, 1=Mon, 2=Tue, ...
+    const TABLE_COLSPAN = "7";
     const BOOK_TIMES = [
       "09.00 - 10.30 [Coach 1]",
       "09.00 - 10.30 [Coach 2]",
@@ -123,7 +124,7 @@
       if (bookedDataArr.length < 1) {
         let trObj = document.createElement('tr');
         let tdObj = document.createElement('td');
-        tdObj.colSpan = "6";
+        tdObj.colSpan = TABLE_COLSPAN;
         tdObj.appendChild(document.createTextNode("Empty"));
         trObj.appendChild(tdObj);
         parent.appendChild(trObj);
@@ -159,7 +160,7 @@
       let parent = document.getElementById('bookedContent');
       let trObj = document.createElement('tr');
       let tdObj = document.createElement('td');
-      tdObj.colSpan = "7";
+      tdObj.colSpan = TABLE_COLSPAN;
       tdObj.classList.add("loading");
       tdObj.appendChild(document.createTextNode("Loading..."));
       trObj.appendChild(tdObj);
@@ -269,14 +270,14 @@
   
     
     
-  
     const setValidStaffCallback = (validStaffIdArr) => {
       var staffList = document.getElementById("staff");
   
       // Clear old option
-      for (i = 0; i < staffList.options.length; i++) {
-        staffList.options[i] = null;
+      while (staffList.options.length > 0) {
+        staffList.remove(0);
       }
+  
       var option = document.createElement("option");
       option.value = -1;
       option.text = "N/A";
