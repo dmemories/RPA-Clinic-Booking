@@ -23,12 +23,16 @@
     const STAFF_MAXSTACK = 2;
     const STAFF_ARR = [
       //{id:0, email:"", nickname:"N/A"},
-      {id:0, email:"1111111@yahoo.com", nickname:"1111"},
-      {id:1, email:"2222222@yahoo.com", nickname:"2222"},
-      {id:2, email:"3333333@yahoo.com", nickname:"3333"},
-      {id:3, email:"4444444@yahoo.com", nickname:"4444"},
-      {id:4, email:"5555555@yahoo.com", nickname:"5555"},
-      {id:5, email:"6666666@yahoo.com", nickname:"6666"}
+      {id:0, email:"tinns446@cuben.postbox.in.th", nickname:"ธาม"},
+      {id:1, email:"kongl529@vanpl.postbox.in.th", nickname:"เปา"},
+      {id:2, email:"Jinnj529@vanpl.postbox.in.th", nickname:"ฟอร์ด"},
+      {id:3, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อต หล่อเท่"},
+      {id:4, email:"phrup505@aparr.postbox.in.th", nickname:"กระต่าย"},
+      {id:5, email:"mongp464@gnsof.postbox.in.th", nickname:"เก่ง ลายพราง"},
+      {id:6, email:"piyavut.dear@yahoo.com", nickname:"เดีย"},
+      {id:7, email:"thits608@elabm.postbox.in.th", nickname:"น้อตส์ุ"},
+      {id:8, email:"Akkar505@aparr.postbox.in.th", nickname:"มาร์ท"},
+      {id:9, email:"prarc529@vanpl.postbox.in.th", nickname:"บอส"}
     ];
   
   
@@ -178,10 +182,10 @@
         Swal.fire('Booking Successfully!', '', 'success') 
       }
   
+      setValidStaff();
       setTime();
       setBookTable();
       setDatePicker();
-      setValidStaff();
     }
     function confirmClick() {
       Swal.fire({
