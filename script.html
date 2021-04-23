@@ -63,7 +63,8 @@
         beforeShowDay: (date) => {
           let m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
           let dayStr = d + '-' + (m+1) + '-' + y;
-          if (date > new Date() && $.inArray(dayStr, enableDateArr) != -1) {
+          let today = new Date();
+          if (date > today.setDate(today.getDate() + 2) && $.inArray(dayStr, enableDateArr) != -1) {
             return [true, (($.inArray(dayStr, fullDateArr) != -1) ? "fullDateHighlight" : "validDateHighlight")];
           }
           return [false];
@@ -122,6 +123,7 @@
   
   
     const setBookTableCallback = (bookedDataArr) => {
+      console.log(bookedDataArr)
       $("#bookedContent").html("");
       let parent = document.getElementById('bookedContent');
       let resultContent = "";
@@ -141,7 +143,7 @@
   
           for (let j = 0; j < bookedDataArr[i].length; j++) {
             let tdObj = document.createElement('td');
-            if (bookedDataArr[i][j].indexOf("{{img}}") >= 0) {
+            if (bookedDataArr[i][j].toString().indexOf("{{img}}") >= 0) {
                 var img = document.createElement('img');
                 img.src = bookedDataArr[i][j].replace("{{img}}", "");
                 img.width = "30"; 
@@ -241,6 +243,7 @@
         Swal.fire('Cancel Successfully!', '', 'success')
       }
       else { Swal.fire('Wrong Password!', '', 'error') }
+      setValidStaff();
       setTime();
       setBookTable();
       setDatePicker();
