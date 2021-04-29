@@ -9,14 +9,18 @@
     const TABLE_COLSPAN = "7";
     const BOOK_TIMES = [
       "09.00 - 10.30 [Coach 1]",
-      "09.00 - 10.30 [Coach 2]",
       "10.30 - 12.00 [Coach 1]",
+  
+      "09.00 - 10.30 [Coach 2]",
       "10.30 - 12.00 [Coach 2]",
+  
       "13.30 - 15.00 [Coach 3]",
-      "13.30 - 15.00 [Coach 4]",
-      "13.30 - 15.00 [Coach 5]",
       "15.00 - 17.00 [Coach 3]",
+  
+      "13.30 - 15.00 [Coach 4]",
       "15.00 - 17.00 [Coach 4]",
+  
+      "13.30 - 15.00 [Coach 5]",
       "15.00 - 17.00 [Coach 5]"
     ];
   
@@ -26,11 +30,11 @@
       {id:0, email:"tinns446@cuben.postbox.in.th", nickname:"ธาม"},
       {id:1, email:"kongl529@vanpl.postbox.in.th", nickname:"เปา"},
       {id:2, email:"Jinnj529@vanpl.postbox.in.th", nickname:"ฟอร์ด"},
-      {id:3, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อต หล่อเท่"},
+      {id:3, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อตใหญ่"},
       {id:4, email:"phrup505@aparr.postbox.in.th", nickname:"กระต่าย"},
-      {id:5, email:"mongp464@gnsof.postbox.in.th", nickname:"เก่ง ลายพราง"},
+      {id:5, email:"mongp464@gnsof.postbox.in.th", nickname:"เก่ง"},
       {id:6, email:"piyavut.dear@yahoo.com", nickname:"เดีย"},
-      {id:7, email:"thits608@elabm.postbox.in.th", nickname:"น้อตส์ุ"},
+      {id:7, email:"thits608@elabm.postbox.in.th", nickname:"น้อตเล็ก"},
       {id:8, email:"Akkar505@aparr.postbox.in.th", nickname:"มาร์ท"},
       {id:9, email:"prarc529@vanpl.postbox.in.th", nickname:"บอส"}
     ];
@@ -62,7 +66,9 @@
         constrainInput: true,
         beforeShowDay: (date) => {
           let m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
+          if (d < 10) d = '0' + d // Add 0 to the first string (5-04-2021 -> 05-04-2021)
           let dayStr = d + '-' + (m+1) + '-' + y;
+  
           let today = new Date();
           if (date > today.setDate(today.getDate() + 2) && $.inArray(dayStr, enableDateArr) != -1) {
             return [true, (($.inArray(dayStr, fullDateArr) != -1) ? "fullDateHighlight" : "validDateHighlight")];
@@ -343,9 +349,11 @@
   
     function setBusiness() {
       let busArr = [
+        "ACC",
         "ADD",
         "Audit",
         "CBO",
+        "CEBO",
         "CFO",
         "CSM & ACC",
         "Enterprise",
@@ -353,9 +361,11 @@
         "HR",
         "mPay",
         "NB",
+        "NNM",
         "Operation",
         "Region",
         "Solution",
+        "SOSD",
         "Other"
       ];
       var selectList = document.getElementById("business");
