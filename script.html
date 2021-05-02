@@ -53,8 +53,9 @@
   // Main
   // -----------------------------------------------------------------------------------------------------
   
-    const setDatePickerCallBack = (fullDateArr_) => {
-      fullDateArr = fullDateArr_;
+    const setDatePickerCallBack = (data) => {
+      fullDateArr = data.fullDateArr;
+      let holidayArr = data.holidayArr
       let futureDateArr = getFutureDate(); // From today to FUTURE_DAY
       enableDateArr = futureDateArr;
   
@@ -70,7 +71,11 @@
           let dayStr = d + '-' + (m+1) + '-' + y;
   
           let today = new Date();
-          if (date > today.setDate(today.getDate() + 2) && $.inArray(dayStr, enableDateArr) != -1) {
+          
+          if (parseInt(holidayArr.indexOf(dayStr)) > -1) {
+            return [false, "holdayDateHighlight"];
+          }
+          else if (date > today.setDate(today.getDate() + 2) && $.inArray(dayStr, enableDateArr) != -1) {
             return [true, (($.inArray(dayStr, fullDateArr) != -1) ? "fullDateHighlight" : "validDateHighlight")];
           }
           return [false];

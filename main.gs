@@ -17,7 +17,7 @@ const xcelGetDateCol = ()=>{ return xcelGetCol(DATE_COLNUM); }
 
 function doGet() {
   //return HtmlService.createHtmlOutputFromFile('index').setTitle('RPA Clinic Booking');;
-  return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking');
+  return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking 1.0');
 }
 
 function include (fileName) {
@@ -254,9 +254,10 @@ function xcelFullDate(bookTimeArr) {
   let tempDateArr = [];
   let fullDateArr = [];
   let bookTimeSize = bookTimeArr.length;
+
+  // Loop MainSheet
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
-
   for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
     if (validCell(dateVal)) {
@@ -269,7 +270,23 @@ function xcelFullDate(bookTimeArr) {
     }
     else break;
   }
-  return  fullDateArr;
+
+  // Loop Holiday
+  let holidayArr = [];
+  sheet = SpreadsheetApp.getActive().getSheetByName("Holiday");
+  dataRow = sheet.getDataRange().getValues();
+  for (let i = 0; i < dataRow.length; i++) {
+    let dateVal = dataRow[i][DATE_COLNUM];
+    if (validCell(dateVal)) {
+      let dateSplit = dateVal.split('-')
+      let day = (dateSplit[0] < 10 && dateSplit[0][0] != 0 ? '0' : '') + dateSplit[0]
+      let month = (dateSplit[1] < 10 && dateSplit[1][0] == '0' ? dateSplit[1].substring(1) : dateSplit[1])
+      let year = dateSplit[2]
+      holidayArr.push(day + "-" + month + "-" + year)
+    }
+    else break;
+  }
+  return  {'fullDateArr':fullDateArr, 'holidayArr':holidayArr};
 }
 
 function xcelGetValidStaff(dataArr) {
@@ -282,7 +299,7 @@ function xcelGetValidStaff(dataArr) {
   // Init staffIdDup
   for (let i = 0; i < staffArr.length; i++) { staffIdDup[i] = 0; }
 
-  let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  let sheet = SpreadsheetApp.getActiveSpregadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
   for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
