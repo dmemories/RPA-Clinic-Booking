@@ -299,7 +299,7 @@ function xcelGetValidStaff(dataArr) {
   // Init staffIdDup
   for (let i = 0; i < staffArr.length; i++) { staffIdDup[i] = 0; }
 
-  let sheet = SpreadsheetApp.getActiveSpregadsheet().getActiveSheet();
+  let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   let dataRow = sheet.getDataRange().getValues();
   for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
@@ -320,40 +320,3 @@ function xcelGetValidStaff(dataArr) {
   }
   return staffArr;
 }
-
-/*  const STAFF_ARR2 = [
-    //{id:0, email:"", nickname:"N/A"},
-    {id:1, email:"1111111@yahoo.com", nickname:"1111"},
-    {id:2, email:"2222222@yahoo.com", nickname:"2222"},
-    {id:3, email:"3333333@yahoo.com", nickname:"3333"},
-    {id:4, email:"4444444@yahoo.com", nickname:"4444"},
-    {id:5, email:"5555555@yahoo.com", nickname:"5555"},
-    {id:6, email:"6666666@yahoo.com", nickname:"6666"}
-  ];
-let x = xcelGetValidStaff({
-  'bookDate': "12-4-2021",
-  'staffArr': STAFF_ARR2,
-  'staffMaxStack': 2
-})
-Logger.log(x) 
- */
-
-/* 
-staffIdDup[]
-	loopEachRow {
-
-		if (row.date == date && row.enable) {
-			foreach (STAFF_ARR as staff) {
-                if (row.staff == staff) {
-                    staffDup[staff.id]++
-                    if (staffDup[staff.id] >= MaxStck) {
-                        STAFF_ARR.splice(staff.id)
-                        break
-                    }
-                }
-            }
-		} 
-
-	}
-	return STAFF_ARR
-*/
