@@ -63,12 +63,14 @@
         //minDate: new Date(2010, 0, 1),
         //maxDate: new Date(2010, 5, 31),
         //dateFormat: 'DD, MM, d, yy',
-        dateFormat: 'd-m-yy',
+        //dateFormat: 'd-m-yy',
+        dateFormat: 'm-d-yy',
         constrainInput: true,
         beforeShowDay: (date) => {
           let m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
           if (d < 10) d = '0' + d // Add 0 to the first string (5-04-2021 -> 05-04-2021)
-          let dayStr = d + '-' + (m+1) + '-' + y;
+         // let dayStr = d + '-' + (m+1) + '-' + y;
+          let dayStr = (m+1) + '-' + d + '-' + y;
   
           let today = new Date();
           
@@ -153,6 +155,12 @@
           trObj.style.verticalAlign = "middle";
   
           for (let j = 0; j < bookedDataArr[i].length; j++) {
+            // Change date format
+            if (j == 0) {
+              let tempSplit = bookedDataArr[i][j].split("-")
+              bookedDataArr[i][j] = tempSplit[1] + "-" + tempSplit[0] + "-" + tempSplit[2]
+            }
+  
             let tdObj = document.createElement('td');
             if (bookedDataArr[i][j].toString().indexOf("{{img}}") >= 0) {
                 var img = document.createElement('img');
@@ -340,7 +348,8 @@
         if (ALLOW_DAY.includes(loopDate.getDay())) {
           let day = loopDate.getDate();
           let month = loopDate.getMonth() + 1;
-          dateStr = (day > 9 ? "" : "0") + day + "-" + (month > 12 ? "1" : month) + "-" + loopDate.getFullYear();
+          //dateStr = (day > 9 ? "" : "0") + day + "-" + (month > 12 ? "1" : month) + "-" + loopDate.getFullYear();
+          dateStr = (month > 12 ? "1" : month) + "-" + (day > 9 ? "" : "0") + day + "-" + loopDate.getFullYear();
           futureDateArr.push(dateStr);
         }
       }

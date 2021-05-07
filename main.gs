@@ -17,7 +17,7 @@ const xcelGetDateCol = ()=>{ return xcelGetCol(DATE_COLNUM); }
 
 function doGet() {
   //return HtmlService.createHtmlOutputFromFile('index').setTitle('RPA Clinic Booking');;
-  return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking 1.0');
+  return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking 1.1');
 }
 
 function include (fileName) {
@@ -274,6 +274,7 @@ function xcelFullDate(bookTimeArr) {
   // Loop Holiday
   let holidayArr = [];
   sheet = SpreadsheetApp.getActive().getSheetByName("Holiday");
+  sheet.getRange("A:A").setNumberFormat("@");  // Change cell format to plain text
   dataRow = sheet.getDataRange().getValues();
   for (let i = 0; i < dataRow.length; i++) {
     let dateVal = dataRow[i][DATE_COLNUM];
@@ -282,7 +283,8 @@ function xcelFullDate(bookTimeArr) {
       let day = (dateSplit[0] < 10 && dateSplit[0][0] != 0 ? '0' : '') + dateSplit[0]
       let month = (dateSplit[1] < 10 && dateSplit[1][0] == '0' ? dateSplit[1].substring(1) : dateSplit[1])
       let year = dateSplit[2]
-      holidayArr.push(day + "-" + month + "-" + year)
+      //holidayArr.push(day + "-" + month + "-" + year)
+      holidayArr.push(month + "-" + day + "-" + year)
     }
     else break;
   }
