@@ -17,7 +17,8 @@ const xcelGetDateCol = ()=>{ return xcelGetCol(DATE_COLNUM); }
 
 function doGet() {
   //return HtmlService.createHtmlOutputFromFile('index').setTitle('RPA Clinic Booking');;
-  return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking 1.1');
+  //return HtmlService.createTemplateFromFile("index").evaluate().setTitle('RPA Clinic Booking 1.2');
+  return HtmlService.createTemplateFromFile("index").evaluate().setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function include (fileName) {
@@ -220,6 +221,7 @@ function xcelSetFormat(whichColArr = ['A', 'B'], stringFormat = "@") {
   range.sort(1);
 }
 
+
 function xcelCancelBooking(dataArr) {
   // Get Arguments
   let cancelDate = dataArr['bookDate'];
@@ -235,6 +237,7 @@ function xcelCancelBooking(dataArr) {
       let timeVal = dataRow[i][TIME_COLNUM];
       let statusVal = dataRow[i][STATUS_COLNUM];
       //let bookerGmail = Session.getActiveUser().getEmail();
+
       if (dateVal == cancelDate && 
           timeVal == cancelTime && 
           statusVal == STATUS_ACTIVE && 
