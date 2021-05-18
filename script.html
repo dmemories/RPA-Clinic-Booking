@@ -77,6 +77,9 @@
           if (parseInt(holidayArr.indexOf(dayStr)) > -1) {
             return [false, "holdayDateHighlight"];
           }
+          else if (date > new Date(2021, 06, 01)) {
+            return [false];
+          }
           else if (date <= today && $.inArray(dayStr, enableDateArr) != -1) {
             return [true, "fullDateHighlight"];
           }
@@ -287,8 +290,11 @@
     function cancelBookingClick(whichDate, whichTime) {
       Swal.fire({
         title: 'Type your password',
-        input: 'password',
-        inputAttributes: { autocapitalize: 'off', maxlength: 10 },
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off',
+          maxlength: 10
+        },
         showCancelButton: true,
         confirmButtonText: 'OK',
         showLoaderOnConfirm: true,
