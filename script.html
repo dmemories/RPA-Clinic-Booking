@@ -8,11 +8,11 @@
     const ALLOW_DAY = [1, 3]; // 0=Sun, 1=Mon, 2=Tue, ...
     const TABLE_COLSPAN = "7";
     const BOOK_TIMES = [
-      "09.00 - 10.30 [Coach 1]",
+      /*"09.00 - 10.30 [Coach 1]",
       "10.30 - 12.00 [Coach 1]",
   
       "09.00 - 10.30 [Coach 2]",
-      "10.30 - 12.00 [Coach 2]",
+      "10.30 - 12.00 [Coach 2]",*/
   
       "13.30 - 15.00 [Coach 3]",
       "15.00 - 17.00 [Coach 3]",
@@ -28,16 +28,17 @@
     const STAFF_ARR = [
       //{id:0, email:"", nickname:"N/A"},
       {id:0, email:"tinns446@cuben.postbox.in.th", nickname:"ธาม"},
-      {id:1, email:"kongl529@vanpl.postbox.in.th", nickname:"เปา"},
-      {id:2, email:"Jinnj529@vanpl.postbox.in.th", nickname:"ฟอร์ด"},
+      {id:1, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อต"},
+      {id:2, email:"phrup505@aparr.postbox.in.th", nickname:"กระต่าย"},
+      {id:3, email:"piyavut.dear@yahoo.com", nickname:"เดีย"},
+      {id:4, email:"Akkar505@aparr.postbox.in.th", nickname:"มาร์ท"},
+      
+      //{id:1, email:"kongl529@vanpl.postbox.in.th", nickname:"เปา"},
+      //{id:2, email:"Jinnj529@vanpl.postbox.in.th", nickname:"ฟอร์ด"},
       //{id:3, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อตใหญ่"},
-      {id:3, email:"komsc685@prodg.postbox.in.th", nickname:"น๊อต"},
-      {id:4, email:"phrup505@aparr.postbox.in.th", nickname:"กระต่าย"},
-      {id:5, email:"mongp464@gnsof.postbox.in.th", nickname:"เก่ง"},
-      {id:6, email:"piyavut.dear@yahoo.com", nickname:"เดีย"},
+      //{id:5, email:"mongp464@gnsof.postbox.in.th", nickname:"เก่ง"},
       //{id:7, email:"thits608@elabm.postbox.in.th", nickname:"น้อตเล็ก"},
-      {id:8, email:"Akkar505@aparr.postbox.in.th", nickname:"มาร์ท"},
-      {id:9, email:"prarc529@vanpl.postbox.in.th", nickname:"บอส"}
+      //{id:9, email:"prarc529@vanpl.postbox.in.th", nickname:"บอส"}
     ];
   
   
@@ -78,7 +79,7 @@
           if (parseInt(holidayArr.indexOf(dayStr)) > -1) {
             return [false, "holdayDateHighlight"];
           }
-          else if (date > new Date(2021, 06, 01)) {
+          else if (date > new Date(2021, 07, 01)) {
             return [false];
           }
           else if (date <= today && $.inArray(dayStr, enableDateArr) != -1) {
@@ -220,7 +221,7 @@
       let bookDateSplit = bookDate.split("-");
       let bookDateFormat = new Date(bookDateSplit[2], (bookDateSplit[0] - 1), bookDateSplit[1], 0, 0, 0, 0);
       let today = new Date();
-      if (bookDateFormat < today.setDate(today.getDate() + 2)) {
+      if (bookDateFormat < today.setDate(today.getDate() + 1)) {
         Swal.fire({
           icon: 'warning',
           title: 'Cannot booking new session on this date',
